@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Latency detector</title>
+  <style>
+    body {
+      background: #f4f4f4;
+      color: #666;
+      font: 48px sans-serif;
+      padding: 60px 50px;
+    }
+
+    table {
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 20px;
+    }
+
+    th {
+      text-align: right;
+      opacity: 0.8;
+    }
+
+    .same {
+      opacity: 0.3;
+    }
+
+    .unit {
+      font-size: 0.8em;
+      opacity: 0.3;
+      padding-left: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <table>
+    <tr>
+      <th>Server time:</th>
+      <td><span id="server-time">…</span></td>
+    </tr>
+    <tr>
+      <th>Local time:</th>
+      <td><span id="local-time">…</span></td>
+    </tr>
+    <tr>
+      <th>Difference:</th>
+      <td><span id="time-delta">…</span><span class="unit">ms</span></td>
+    </tr>
+  </table>
+
+  <div id="latency"></div>
+  <script>
+    fetch('https://us-central1-fdb-learn-gcp.cloudfunctions.net/currentTime')
+      .then(res => res.json()).then(json => {
+        console.assert(json.status === 'OK');
+        const serverTime = json.time;
+        const localTime = Date.now();
+        const timeDelta = localTime - serverTime;
+
+        const serverDigits = '' + serverTime;
+        const localDigits = '' + localTime;
+        let diffIndex = 0;
+
+        for (; ;) {
+          if (serverDigits[diffIndex] != localDigits[diffIndex]) {
+            break;
+          }
+          diffIndex++;
+        }
+
+        document.querySelector('#server-time').innerHTML = `<span class="same">${serverDigits.substring(0, diffIndex)}</span><span class="diff">${serverDigits.substring(diffIndex)}</span>`;
+        document.querySelector('#local-time').innerHTML = `<span class="same">${localDigits.substring(0, diffIndex)}</span><span class="diff">${localDigits.substring(diffIndex)}</span>`;;
+        document.querySelector('#time-delta').innerHTML = timeDelta;
+
+
+      });
+  </script>
+</body>
+
+</html>
