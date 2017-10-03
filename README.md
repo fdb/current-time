@@ -1,6 +1,8 @@
 # gcf-current-time
 Report the current time as JSON, using Google Cloud Functions.
 
+![Screenshot](https://raw.githubusercontent.com/fdb/current-time/master/.github/screenshot.png)
+
 Documentation: https://cloud.google.com/functions/docs/tutorials/http
 
 Uses the [Express API](http://expressjs.com/en/api.html).
